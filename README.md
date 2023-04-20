@@ -109,3 +109,18 @@ password: test123!@#
 
 Done!
 
+## Setup Django Admin
+Django Admin is GUI for models with basic functions: create, read, update, delete. The main concept of code as below:
+
+![Group 39](https://user-images.githubusercontent.com/29207172/233340760-620a652a-a5bc-4302-9aa0-8064f2a2a9bb.png)
+
+Run test: `docker-compose run --rm app sh -c "python manage.py test"`
+Run Admin console: `docker-compose up`
+
+![Screen_Recording_2023-04-20_at_5_36_42_PM_AdobeExpress_AdobeExpress](https://user-images.githubusercontent.com/29207172/233344609-45338dbd-accd-4e2d-a894-fd51c6b0c1c7.gif)
+
+
+
+
+
+
