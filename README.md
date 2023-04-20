@@ -66,7 +66,7 @@ After making sure the DB migrations successfully, we continue to create test and
 
 Open `127.0.0.1:8000/admin/login` 
 
-![Screenshot 2023-04-20 at 1.28.20 PM.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a81c6651-d752-40c3-a4a9-942fef51490d/Screenshot_2023-04-20_at_1.28.20_PM.png)
+<img width="1433" alt="Screenshot 2023-04-20 at 1 28 20 PM" src="https://user-images.githubusercontent.com/29207172/233285787-ddaa6d1e-4c69-40d8-825c-a936a160801b.png">
 
 To by pass login, you must create a superuser by using this command:
 
