@@ -119,7 +119,66 @@ Run Admin console: `docker-compose up`
 
 ![Screen_Recording_2023-04-20_at_5_36_42_PM_AdobeExpress_AdobeExpress](https://user-images.githubusercontent.com/29207172/233344609-45338dbd-accd-4e2d-a894-fd51c6b0c1c7.gif)
 
+## Create API swagger documentation
 
+![Group 44](https://user-images.githubusercontent.com/29207172/233530834-a14742cc-215f-4d96-9858-16f8085954db.png)
+
+- First, define  the lib on `requirementations.txt`
+
+```perl
+drf-spectacular>=0.15.1,<0.16
+```
+
+- Run `docker-compose build` to build the library added
+- On `[settings.py](http://settings.py)` add the following code to define two Django packages that will be included as part of the installed apps in a Django project.
+
+```python
+INSTALLED_APPS = [
+    ...,
+    'rest_framework',
+    'drf_spectacular',
+]
+```
+
+`'rest_framework'`refers to the Django REST framework (DRF) which is a toolkit for building Web APIs
+
+`'drf_spectacular'` is an extension for DRF that simplifies the process of generating OpenAPI documentation for your API views
+
+- Configuring Django REST framework (DRF) to use the `AutoSchema`class as the default schema for generating OpenAPI documentation.
+
+In  `settings.py`
+
+```
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+```
+
+Add the config URL in `urls.py`
+
+```python
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+)
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
+    path(
+        'api/docs/',
+        SpectacularSwaggerView.as_view(url_name='api-schema'),
+        name='api-docs',
+    )
+         
+]
+```
+
+Run `docker-compose up` to run server and access API doc at `127.0.0.1:8000/api/docs/`
+
+![Screenshot 2023-04-21 at 9 51 00 AM](https://user-images.githubusercontent.com/29207172/233530888-0a3b918a-1dca-49a9-a60d-1bf54bbb4fa7.png)
 
 
 
