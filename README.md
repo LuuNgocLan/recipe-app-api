@@ -130,7 +130,7 @@ drf-spectacular>=0.15.1,<0.16
 ```
 
 - Run `docker-compose build` to build the library added
-- On `[settings.py](http://settings.py)` add the following code to define two Django packages that will be included as part of the installed apps in a Django project.
+- On `settings.py` add the following code to define two Django packages that will be included as part of the installed apps in a Django project.
 
 ```python
 INSTALLED_APPS = [
@@ -180,6 +180,105 @@ Run `docker-compose up` to run server and access API doc at `127.0.0.1:8000/api/
 
 ![Screenshot 2023-04-21 at 9 51 00 AM](https://user-images.githubusercontent.com/29207172/233530888-0a3b918a-1dca-49a9-a60d-1bf54bbb4fa7.png)
 
+## Build User API
 
+### Create User API
 
+The main steps/flow of creating User API was described below:
 
+![Group 45 (1)](https://user-images.githubusercontent.com/29207172/234165792-fd944dc5-4f09-4227-803b-57830fa9f230.png)
+
+- Create `user` app:
+
+    ```perl
+    docker-compose run --rm app sh -c "python manage.py startapp user"
+    ```
+
+to create `user` app in project. After creating, let remove the file unnecessary as below:
+
+<img width="426" alt="Screenshot 2023-04-21 at 10 20 01 AM" src="https://user-images.githubusercontent.com/29207172/234165887-58f6f262-1f81-47c5-b36d-83d80d57a62c.png">
+
+- Add `user` app to `settings.py`
+
+`settings.py`
+
+```python
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'core',
+    'rest_framework',
+    'drf_spectacular',
+    'user',
+]
+```
+
+- Create `test_user_api.py`
+
+This file contains integration tests using API testing techniques to ensure that the User API endpoint works as intended and meets the project requirements.
+
+Run test `docker-compose run --rm app sh -c "python manage.py test"` It will be failed 🙃
+
+- Implementation create User API to pass test
+
+Create file `user/serializers.py` for the user API view
+
+- Create view
+- Define and mapping URL to main app
+
+### Authorization
+
+There are 4 types of authentication API in the browser
+
+- Basic authentication: send username & password for each request
+- Token: use in HTTP/HTTPs Header
+- Json Web Token (JWT): use access and refresh token
+- Session: use cookies
+
+Let's explore token authentication and see how it works
+
+<img width="848" alt="Group 51" src="https://user-images.githubusercontent.com/29207172/234165970-d86a7dd9-b2b9-4598-8d01-5b079d0a15d3.png">
+
+From the Main Flow of creating new user API and we can apply for each API. With creating authentication API:
+
+- In `[settings.py](http://settings.py)` remember to add `rest_framework.authtoken` to `INSTALLED_APPS` section.
+- Create the test  for each use case related to the authentication in `test_user_api.py` file
+    - test_create_token_for_user
+    - test_retrieve_user_authorized
+    - test_create_token_bad_credentials
+    - test_create_token_blank_password
+    
+    Remember to define URL:
+    
+    ```perl
+    TOKEN_URL = reverse('user:token')
+    ME_URL = reverse('user:me')
+    ```
+    
+- In `[serializers.py](http://serializers.py)`  add a method to update the password to `UserSerializer` . Besides that, create `AuthTokenSerializer` for the user and auth token.
+- Import the `AuthTokenSerializer` and then define API View `CreateTokenView` and `ManageUserView` in `views.py`
+- Mapping URL in `user/urls.py`
+
+    ```perl
+    path('token/', views.CreateTokenView.as_view(), name = 'token'),
+    path('me/', views.ManageUserView.as_view(), name = 'me'),
+    ```
+
+Great! Let’s run the test command to see the test case passed and restart the server by using:
+
+```perl
+docker-compose up
+```
+See the result of User API section:
+
+<img width="1437" alt="Screenshot 2023-04-25 at 10 58 19 AM" src="https://user-images.githubusercontent.com/29207172/234171156-3edfa185-9a75-4717-b458-0409d89079a9.png">
+
+---
+## References
+
+- Learning Memo: https://literate-technician-def.notion.site/Learning-Memo-REST-API-with-Python-and-Django-1fa21c66933c4b56b4d3452f6b4c436e
+- The Course that I learned in Udemy: https://www.udemy.com/share/101XNg3@XgZeEzx8lXZI0ZwnbZuoTCxc3LLGPg95-UPorA2qbPYBU0bijccFlbUS-6RcCRHQ/
