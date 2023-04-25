@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
 
+
 class ModelTests(TestCase):
     """Test models."""
 
@@ -25,20 +26,20 @@ class ModelTests(TestCase):
         """Test new user email nomalized."""
 
         sample_emails = [
-            ['test1@EXAMPLE.com','test1@example.com'],
-            ['Test2@Example.com','Test2@example.com'],
-            ['TEST3@EXAMPLE.COM','TEST3@example.com'],
-            ['Test4@example.COM','Test4@example.com'],
+            ['test1@EXAMPLE.com', 'test1@example.com'],
+            ['Test2@Example.com', 'Test2@example.com'],
+            ['TEST3@EXAMPLE.COM', 'TEST3@example.com'],
+            ['Test4@example.COM', 'Test4@example.com'],
         ]
 
-        for email,expected in sample_emails:
-            user = get_user_model().objects.create_user(email,'sample123')
-            self.assertEqual(user.email,expected)
+        for email, expected in sample_emails:
+            user = get_user_model().objects.create_user(email, 'sample123')
+            self.assertEqual(user.email, expected)
 
     def test_new_user_without_email_raise_error(self):
         """Test that creating a user without an email raise ValueError."""
         with self.assertRaises(ValueError):
-            get_user_model().objects.create_user('',"test123")
+            get_user_model().objects.create_user('', "test123")
 
     def test_create_superuser(self):
         """Test creating a super user."""
