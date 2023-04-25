@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.scannerwork/.sonar_lock
+.gitignore
+.scannerwork/report-task.txt
