@@ -20,14 +20,16 @@ from recipe.serializers import (
 
 RECIPES_URL = reverse('recipe:recipe-list')
 
+
 def detail_url(recipe_id):
     """Create and return a recipe detail URL."""
     return reverse('recipe:recipe-detail', args=[recipe_id])
 
+
 def create_recipe(user, **params):
     """Create and return a sample recipe."""
     defaults = {
-        'title':'Sample recipe title',
+        'title': 'Sample recipe title',
         'time_minutes': 22,
         'price': Decimal('5.25'),
         'description': 'Sample description',
@@ -38,9 +40,11 @@ def create_recipe(user, **params):
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
 
+
 def create_user(**params):
     """Create and return a new user."""
     return get_user_model().objects.create_user(**params)
+
 
 class PublicRecipeAPITests(TestCase):
     """Test unauthenticated API request."""
@@ -54,12 +58,14 @@ class PublicRecipeAPITests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
 class PrivateRecipeApiTests(TestCase):
     """Test authenticated API requests."""
 
     def setUp(self):
         self.client = APIClient()
-        self.user = create_user(email='user@example.com', password='testpass123')
+        self.user = create_user(
+            email='user@example.com', password='testpass123')
         self.client.force_authenticate(self.user)
 
     def test_retrieve_recipes(self):
@@ -70,7 +76,7 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.get(RECIPES_URL)
 
         recipes = Recipe.objects.all().order_by('-id')
-        serializer = RecipeSerializer(recipes, many = True)
+        serializer = RecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
@@ -110,7 +116,7 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         recipe = Recipe.objects.get(id=res.data['id'])
-        for k,v in payload.items():
+        for k, v in payload.items():
             self.assertEqual(getattr(recipe, k), v)
         self.assertEqual(recipe.user, self.user)
 
@@ -154,16 +160,17 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         recipe.refresh_from_db()
-        for k,v in payload.items():
+        for k, v in payload.items():
             self.assertEqual(getattr(recipe, k), v)
         self.assertEqual(recipe.user, self.user)
 
     def test_update_returns_error(self):
         """Test changing the recipe user results in an error."""
-        new_user = create_user(email='user2@example.com', password='testpass123')
+        new_user = create_user(email='user2@example.com',
+                               password='testpass123')
         recipe = create_recipe(user=self.user)
 
-        payload = {'user':new_user.id}
+        payload = {'user': new_user.id}
         url = detail_url(recipe_id=recipe.id)
         self.client.patch(url, payload)
 
@@ -182,7 +189,8 @@ class PrivateRecipeApiTests(TestCase):
 
     def test_delete_other_users_recipe_error(self):
         """Test trying to delete another users recipe gives error."""
-        new_user = create_user(email='user2@example.com', password='testpass1234')
+        new_user = create_user(email='user2@example.com',
+                               password='testpass1234')
         recipe = create_recipe(user=new_user)
 
         url = detail_url(recipe_id=recipe.id)
@@ -190,4 +198,3 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
-
